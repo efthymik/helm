@@ -18,8 +18,11 @@
 #include "full_interface.h"
 
 void OpenGLComponent::setViewPort(OpenGLContext& open_gl_context) {
-  float scale = open_gl_context.getRenderingScale();
   FullInterface* parent = findParentComponentOfClass<FullInterface>();
+  if (parent == nullptr)
+    return;
+
+  float scale = (float) open_gl_context.getRenderingScale();
   Rectangle<int> top_level_bounds = parent->getBounds();
   Rectangle<int> global_bounds = parent->getLocalArea(this, getLocalBounds());
 

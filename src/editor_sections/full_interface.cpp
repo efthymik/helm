@@ -246,6 +246,15 @@ void FullInterface::resized() {
   checkBackground();
 }
 
+void FullInterface::setHostScaleFactor(float factor) {
+  hostScaleFactor_ = factor;
+  checkBackground();
+}
+
+float FullInterface::getCurrentScale() {
+  return jmax((float) open_gl_context.getRenderingScale(), 1.0f);
+}
+
 void FullInterface::setOutputMemory(const float* output_memory) {
   oscilloscope_->setOutputMemory(output_memory);
 }
@@ -290,10 +299,7 @@ void FullInterface::animate(bool animate) {
 }
 
 void FullInterface::checkBackground() {
-  auto *display = Desktop::getInstance().getDisplays().getPrimaryDisplay();
-  jassert(display != nullptr);
-
-  float scale = display->scale;
+  float scale = jmax(getCurrentScale(), 1.0f);
   int width = scale * getWidth();
   int height = scale * getHeight();
 
@@ -312,6 +318,7 @@ void FullInterface::newOpenGLContextCreated() {
 }
 
 void FullInterface::renderOpenGL() {
+  checkBackground();
   background_.render(open_gl_context);
   renderOpenGLComponents(open_gl_context, animate_);
 }

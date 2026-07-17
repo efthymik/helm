@@ -82,6 +82,22 @@ void HelmEditor::updateFullGui() {
   helm_.updateHostDisplay();
 }
 
+void HelmEditor::setScaleFactor(float newScale) {
+  if (approximatelyEqual(newScale, hostScaleFactor_))
+    return;
+
+  hostScaleFactor_ = newScale;
+
+  float windowSize = LoadSave::loadWindowSize();
+  int w = roundToInt(windowSize * mopo::DEFAULT_WINDOW_WIDTH * newScale);
+  int h = roundToInt(windowSize * mopo::DEFAULT_WINDOW_HEIGHT * newScale);
+
+  constrainer_.setMinimumSize(roundToInt(2.0f * mopo::DEFAULT_WINDOW_WIDTH / 3.0f * newScale),
+                              roundToInt(2.0f * mopo::DEFAULT_WINDOW_HEIGHT / 3.0f * newScale));
+
+  setSize(w, h);
+}
+
 void HelmEditor::checkAnimate() {
   Component* top_level = getTopLevelComponent();
   bool should_animate = top_level->hasKeyboardFocus(true) && top_level->isShowing();

@@ -20,9 +20,9 @@
 #include "midi_manager.h"
 #include "synth_base.h"
 
-#define LINUX_FACTORY_PATCH_DIRECTORY "/usr/share/helm/patches"
+#define LINUX_FACTORY_PATCH_DIRECTORY "~/.local/share/helm/patches"
 #define USER_BANK_NAME "User Patches"
-#define LINUX_BANK_DIRECTORY "~/.helm/patches"
+#define LINUX_BANK_DIRECTORY "~/.local/share/helm/patches"
 #define EXPORTED_BANK_EXTENSION "helmbank"
 #define DID_PAY_FILE "thank_you.txt"
 #define PAY_WAIT_DAYS 4
@@ -352,18 +352,17 @@ String LoadSave::getLicense(var state) {
 }
 
 File LoadSave::getConfigFile() {
+#ifdef LINUX
+  return File("~/.config/helm/Helm.config");
+#else
   PropertiesFile::Options config_options;
   config_options.applicationName = "Helm";
   config_options.osxLibrarySubFolder = "Application Support";
   config_options.filenameSuffix = "config";
-
-#ifdef LINUX
-  config_options.folderName = "." + String(ProjectInfo::projectName).toLowerCase();
-#else
   config_options.folderName = String(ProjectInfo::projectName).toLowerCase();
-#endif
 
   return config_options.getDefaultFile();
+#endif
 }
 
 var LoadSave::getConfigVar() {

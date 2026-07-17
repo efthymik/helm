@@ -22,6 +22,22 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # It's "bad form" to set this globally, but it's convenient.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# ==============================================================================
+# GCC LTO Plugin Fix for Legacy Ubuntu 16.04 Binutils
+# ==============================================================================
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -flto") # -static-libgcc
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto") # -static-libgcc -static-libstdc++
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+  SET(CMAKE_AR  "gcc-ar")
+  SET(CMAKE_RANLIB  "gcc-ranlib")
+  SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> qcs <TARGET> <LINK_FLAGS> <OBJECTS>")
+  SET(CMAKE_C_ARCHIVE_FINISH   true)
+  SET(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -crD <TARGET> <LINK_FLAGS> <OBJECTS>")
+  SET(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> -rD <TARGET> <LINK_FLAGS> <OBJECTS>")
+  SET(CMAKE_CXX_ARCHIVE_FINISH "<CMAKE_RANLIB> -D <TARGET>")
+endif()
+
 # ==================================================
 
 add_subdirectory(concurrentqueue)
@@ -235,11 +251,11 @@ target_include_directories(HelmStandalone PRIVATE
   src/standalone)
 
 target_compile_definitions(HelmStandalone PRIVATE
-  JUCE_WASAPI=1
-  JUCE_DIRECTSOUND=1
-  JUCE_ALSA=1
-  JUCE_JACK=1
-  JUCE_JACK_CLIENT_NAME="Helm"
-  JUCE_ALSA_MIDI_NAME="Helm")
+  $<$<PLATFORM_ID:Windows>:JUCE_WASAPI=1>
+  $<$<PLATFORM_ID:Windows>:JUCE_DIRECTSOUND=1>
+  $<$<PLATFORM_ID:Linux>:JUCE_ALSA=1>
+  $<$<PLATFORM_ID:Linux>:JUCE_JACK=1>
+  $<$<PLATFORM_ID:Linux>:JUCE_JACK_CLIENT_NAME="Helm">
+  $<$<PLATFORM_ID:Linux>:JUCE_ALSA_MIDI_NAME="Helm">)
 
 target_link_libraries(HelmStandalone PRIVATE HelmPlugin)

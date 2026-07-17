@@ -34,9 +34,12 @@ class HelmEditor : public AudioProcessorEditor, public SynthGuiInterface {
     void focusLost(FocusChangeType cause) override;
     void focusOfChildComponentChanged(FocusChangeType cause) override;
     void parentHierarchyChanged() override;
+    void setScaleFactor(float newScale) override;
 
     // SynthGuiInterface
     void updateFullGui() override;
+
+    FullInterface* gui() { return gui_.get(); }
 
   private:
     void checkAnimate();
@@ -44,6 +47,7 @@ class HelmEditor : public AudioProcessorEditor, public SynthGuiInterface {
     HelmPlugin& helm_;
     bool was_animating_;
     ComponentBoundsConstrainer constrainer_;
+    float hostScaleFactor_ = 1.0f;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HelmEditor)
 };

@@ -58,6 +58,9 @@ class FullInterface : public SynthSection, public OpenGLRenderer {
     void buttonClicked(Button* clicked_button) override;
     void animate(bool animate = true) override;
     void checkBackground();
+    void setHostScaleFactor(float factor);
+
+    float getHostScaleFactor() const { return hostScaleFactor_; }
 
     void newOpenGLContextCreated() override;
     void renderOpenGL() override;
@@ -70,6 +73,8 @@ class FullInterface : public SynthSection, public OpenGLRenderer {
     void externalPatchLoaded(File patch) { patch_browser_->externalPatchLoaded(patch); }
 
   private:
+    float getCurrentScale();
+
     std::map<std::string, SynthSlider*> slider_lookup_;
     std::map<std::string, Button*> button_lookup_;
     std::unique_ptr<OpenGLModulationManager> modulation_manager_;
@@ -92,6 +97,7 @@ class FullInterface : public SynthSection, public OpenGLRenderer {
     std::unique_ptr<VolumeSection> volume_section_;
 
     bool animate_;
+    float hostScaleFactor_ = 1.0f;
     OpenGLContext open_gl_context;
     Image background_image_;
     OpenGLBackground background_;
